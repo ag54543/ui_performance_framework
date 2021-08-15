@@ -1,0 +1,2 @@
+gradlew clean assemble
+gradlew -Dcucumber.options="--tags @Test" -Dproperties="serenity.properties" test aggregate

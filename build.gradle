@@ -1,0 +1,72 @@
+group 'SerenityBDDSample'
+version '1.0-SNAPSHOT'
+
+defaultTasks 'clean', 'test', 'reports'
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.17")
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.serenity-bdd.aggregator'
+apply from: "$rootDir/gradle/libraries.gradle"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    test {
+        resources {
+            srcDir file('src/test/resources')
+            exclude '**/*.java'
+        }
+    }
+}
+dependencies {
+    compile libs.slf4jApi,
+            libs.logback
+    testCompile 'ch.qos.logback:logback-classic:1.2.3'
+    testCompile 'ch.qos.logback:logback-core:1.2.3'
+    // https://mvnrepository.com/artifact/net.serenity-bdd/serenity-junit
+    compile group: 'net.serenity-bdd', name: 'serenity-junit', version: '2.0.17'
+    // https://mvnrepository.com/artifact/net.serenity-bdd/serenity-cucumber
+    compile group: 'net.serenity-bdd', name: 'serenity-cucumber', version: '1.9.19'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi
+    implementation group: 'org.apache.poi', name: 'poi', version: '3.10-FINAL'
+    // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.10-FINAL'
+
+
+
+    testCompile libs.test.serenity.core,
+            libs.test.serenity.cucumber,
+            libs.test.junit,
+            libs.test.assertj
+}
+
+
+clean {
+    delete 'target', 'generated'
+}
+
+test {
+    testLogging.showStandardStreams = true
+}
+
+gradle.startParameter.continueOnFailure = true
+
+test.finalizedBy(aggregate)
